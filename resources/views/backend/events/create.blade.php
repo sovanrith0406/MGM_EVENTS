@@ -12,7 +12,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ url('dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ url('events.index') }}">Events</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('events.index') }}">Events</a></li>
                         <li class="breadcrumb-item active">Add Event</li>
                     </ol>
                 </div>
@@ -27,7 +27,8 @@
                     <h3 class="card-title">Event Information</h3>
                 </div>
 
-                <form action="{{ route('events.store') }}" method="POST" class="form-horizontal">
+                {{-- enctype required for file upload --}}
+                <form action="{{ route('events.store') }}" method="POST" enctype="multipart/form-data" class="form-horizontal">
                     @csrf
                     <div class="card-body">
 
@@ -64,6 +65,25 @@
                             </div>
                         </div>
 
+                        {{-- Image Upload --}}
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Event Image</label>
+                            <div class="col-sm-10">
+                                <div class="custom-file">
+                                    <input type="file" name="image" id="image" accept="image/*"
+                                           class="custom-file-input @error('image') is-invalid @enderror"
+                                           onchange="previewImage(this)">
+                                    <label class="custom-file-label" for="image">Choose image...</label>
+                                </div>
+                                @error('image')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
+                                <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max size: 2MB.</small>
+                                <div class="mt-2">
+                                    <img id="image-preview" src="#" alt="Preview"
+                                         class="img-thumbnail" style="max-height: 180px; display: none;">
+                                </div>
+                            </div>
+                        </div>
+
                         {{-- Start Date & End Date --}}
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Start Date <span class="text-danger">*</span></label>
@@ -88,12 +108,12 @@
                             <div class="col-sm-10">
                                 <select name="timezone" class="form-control @error('timezone') is-invalid @enderror">
                                     <option value="">-- Select Timezone --</option>
-                                    <option value="UTC"              {{ old('timezone') == 'UTC'              ? 'selected' : '' }}>UTC</option>
-                                    <option value="Asia/Phnom_Penh"  {{ old('timezone', 'Asia/Phnom_Penh') == 'Asia/Phnom_Penh'  ? 'selected' : '' }}>Asia/Phnom_Penh (ICT +7)</option>
-                                    <option value="Asia/Singapore"   {{ old('timezone') == 'Asia/Singapore'   ? 'selected' : '' }}>Asia/Singapore (SGT +8)</option>
-                                    <option value="Asia/Tokyo"       {{ old('timezone') == 'Asia/Tokyo'       ? 'selected' : '' }}>Asia/Tokyo (JST +9)</option>
-                                    <option value="America/New_York" {{ old('timezone') == 'America/New_York' ? 'selected' : '' }}>America/New_York (EST)</option>
-                                    <option value="Europe/London"    {{ old('timezone') == 'Europe/London'    ? 'selected' : '' }}>Europe/London (GMT)</option>
+                                    <option value="UTC"              {{ old('timezone') == 'UTC'             ? 'selected' : '' }}>UTC</option>
+                                    <option value="Asia/Phnom_Penh"  {{ old('timezone', 'Asia/Phnom_Penh') == 'Asia/Phnom_Penh' ? 'selected' : '' }}>Asia/Phnom_Penh (ICT +7)</option>
+                                    <option value="Asia/Singapore"   {{ old('timezone') == 'Asia/Singapore'  ? 'selected' : '' }}>Asia/Singapore (SGT +8)</option>
+                                    <option value="Asia/Tokyo"       {{ old('timezone') == 'Asia/Tokyo'      ? 'selected' : '' }}>Asia/Tokyo (JST +9)</option>
+                                    <option value="America/New_York" {{ old('timezone') == 'America/New_York'? 'selected' : '' }}>America/New_York (EST)</option>
+                                    <option value="Europe/London"    {{ old('timezone') == 'Europe/London'   ? 'selected' : '' }}>Europe/London (GMT)</option>
                                 </select>
                                 @error('timezone')<span class="invalid-feedback">{{ $message }}</span>@enderror
                             </div>
@@ -115,8 +135,6 @@
                                 @error('venue_id')<span class="invalid-feedback">{{ $message }}</span>@enderror
                             </div>
                         </div>
-
-                        
 
                         {{-- Price & Currency --}}
                         <div class="form-group row">
@@ -145,8 +163,6 @@
                                 <select name="status" class="form-control @error('status') is-invalid @enderror">
                                     <option value="draft"     {{ old('status', 'draft') == 'draft'     ? 'selected' : '' }}>Draft</option>
                                     <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
-                                    {{-- <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                                    <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option> --}}
                                 </select>
                                 @error('status')<span class="invalid-feedback">{{ $message }}</span>@enderror
                             </div>
@@ -167,4 +183,21 @@
         </div>
     </section>
 </div>
+
+@push('scripts')
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('image-preview');
+        const label   = input.nextElementSibling;
+        if (input.files && input.files[0]) {
+            label.textContent = input.files[0].name;
+            preview.src = URL.createObjectURL(input.files[0]);
+            preview.style.display = 'block';
+        } else {
+            label.textContent = 'Choose image...';
+            preview.style.display = 'none';
+        }
+    }
+</script>
+@endpush
 @endsection

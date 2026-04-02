@@ -9,11 +9,10 @@ class Event extends Model
     protected $primaryKey = 'event_id';
 
     protected $fillable = [
-        'venue_id', 'event_name', 'description',
+        'venue_id', 'event_name', 'image', 'description',
         'start_date', 'end_date', 'timezone',
         'status', 'created_by',
-        'price',
-        'currency',
+        'price', 'currency',
     ];
 
     // ── Relationships ────────────────────────────────────────────

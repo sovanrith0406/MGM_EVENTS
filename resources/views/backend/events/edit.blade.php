@@ -12,7 +12,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ url('dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ url('events.index') }}">Events</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('events.index') }}">Events</a></li>
                         <li class="breadcrumb-item active">Edit Event</li>
                     </ol>
                 </div>
@@ -27,7 +27,8 @@
                     <h3 class="card-title">Edit: <strong>{{ $event->event_name }}</strong></h3>
                 </div>
 
-                <form action="{{ route('events.update', $event->event_id) }}" method="POST" class="form-horizontal">
+                {{-- enctype required for file upload --}}
+                <form action="{{ route('events.update', $event->event_id) }}" method="POST" enctype="multipart/form-data" class="form-horizontal">
                     @csrf
                     @method('PUT')
                     <div class="card-body">
@@ -65,6 +66,35 @@
                             </div>
                         </div>
 
+                        {{-- Image Upload --}}
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Event Image</label>
+                            <div class="col-sm-10">
+                                {{-- Show current image if exists --}}
+                                @if($event->image)
+                                    <div class="mb-2">
+                                        <img src="{{ asset('storage/' . $event->image) }}"
+                                             alt="Current Event Image"
+                                             class="img-thumbnail"
+                                             style="max-height: 180px;">
+                                        <p class="text-muted mt-1 mb-0"><small>Current image. Upload a new file below to replace it.</small></p>
+                                    </div>
+                                @endif
+                                <div class="custom-file">
+                                    <input type="file" name="image" id="image" accept="image/*"
+                                           class="custom-file-input @error('image') is-invalid @enderror"
+                                           onchange="previewImage(this)">
+                                    <label class="custom-file-label" for="image">Choose new image...</label>
+                                </div>
+                                @error('image')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
+                                <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max size: 2MB.</small>
+                                <div class="mt-2">
+                                    <img id="image-preview" src="#" alt="New Image Preview"
+                                         class="img-thumbnail" style="max-height: 180px; display: none;">
+                                </div>
+                            </div>
+                        </div>
+
                         {{-- Start Date & End Date --}}
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Start Date <span class="text-danger">*</span></label>
@@ -89,12 +119,12 @@
                             <div class="col-sm-10">
                                 <select name="timezone" class="form-control @error('timezone') is-invalid @enderror">
                                     <option value="">-- Select Timezone --</option>
-                                    <option value="UTC"              {{ old('timezone', $event->timezone) == 'UTC'              ? 'selected' : '' }}>UTC</option>
-                                    <option value="Asia/Phnom_Penh"  {{ old('timezone', $event->timezone) == 'Asia/Phnom_Penh'  ? 'selected' : '' }}>Asia/Phnom_Penh (ICT +7)</option>
-                                    <option value="Asia/Singapore"   {{ old('timezone', $event->timezone) == 'Asia/Singapore'   ? 'selected' : '' }}>Asia/Singapore (SGT +8)</option>
-                                    <option value="Asia/Tokyo"       {{ old('timezone', $event->timezone) == 'Asia/Tokyo'       ? 'selected' : '' }}>Asia/Tokyo (JST +9)</option>
-                                    <option value="America/New_York" {{ old('timezone', $event->timezone) == 'America/New_York' ? 'selected' : '' }}>America/New_York (EST)</option>
-                                    <option value="Europe/London"    {{ old('timezone', $event->timezone) == 'Europe/London'    ? 'selected' : '' }}>Europe/London (GMT)</option>
+                                    <option value="UTC"              {{ old('timezone', $event->timezone) == 'UTC'             ? 'selected' : '' }}>UTC</option>
+                                    <option value="Asia/Phnom_Penh"  {{ old('timezone', $event->timezone) == 'Asia/Phnom_Penh' ? 'selected' : '' }}>Asia/Phnom_Penh (ICT +7)</option>
+                                    <option value="Asia/Singapore"   {{ old('timezone', $event->timezone) == 'Asia/Singapore'  ? 'selected' : '' }}>Asia/Singapore (SGT +8)</option>
+                                    <option value="Asia/Tokyo"       {{ old('timezone', $event->timezone) == 'Asia/Tokyo'      ? 'selected' : '' }}>Asia/Tokyo (JST +9)</option>
+                                    <option value="America/New_York" {{ old('timezone', $event->timezone) == 'America/New_York'? 'selected' : '' }}>America/New_York (EST)</option>
+                                    <option value="Europe/London"    {{ old('timezone', $event->timezone) == 'Europe/London'   ? 'selected' : '' }}>Europe/London (GMT)</option>
                                 </select>
                                 @error('timezone')<span class="invalid-feedback">{{ $message }}</span>@enderror
                             </div>
@@ -117,8 +147,6 @@
                             </div>
                         </div>
 
-                        
-
                         {{-- Price & Currency --}}
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Price <span class="text-danger">*</span></label>
@@ -132,8 +160,8 @@
                             <div class="col-sm-3">
                                 <select name="currency" class="form-control @error('currency') is-invalid @enderror">
                                     <option value="USD" {{ old('currency', $event->currency) == 'USD' ? 'selected' : '' }}>USD</option>
-                                    {{-- <option value="KHR" {{ old('currency', $event->currency) == 'KHR' ? 'selected' : '' }}>KHR</option>
-                                    <option value="EUR" {{ old('currency', $event->currency) == 'EUR' ? 'selected' : '' }}>EUR</option> --}}
+                                    <option value="KHR" {{ old('currency', $event->currency) == 'KHR' ? 'selected' : '' }}>KHR</option>
+                                    <option value="EUR" {{ old('currency', $event->currency) == 'EUR' ? 'selected' : '' }}>EUR</option>
                                 </select>
                                 @error('currency')<span class="invalid-feedback">{{ $message }}</span>@enderror
                             </div>
@@ -144,10 +172,10 @@
                             <label class="col-sm-2 col-form-label">Status <span class="text-danger">*</span></label>
                             <div class="col-sm-10">
                                 <select name="status" class="form-control @error('status') is-invalid @enderror">
-                                    <option value="draft"     {{ old('status', $event->status) == 'draft'     ? 'selected' : '' }}>Cancelled</option>
-                                    <option value="published" {{ old('status', $event->status) == 'published' ? 'selected' : '' }}>Published</option>
-                                    {{-- <option value="cancelled" {{ old('status', $event->status) == 'cancelled' ? 'selected' : '' }}>Cancelled</option> --}}
-                                    {{-- <option value="completed" {{ old('status', $event->status) == 'completed' ? 'selected' : '' }}>Completed</option> --}}
+                                    <option value="draft"      {{ old('status', $event->status) == 'draft'      ? 'selected' : '' }}>Draft</option>
+                                    <option value="published"  {{ old('status', $event->status) == 'published'  ? 'selected' : '' }}>Published</option>
+                                    <option value="cancelled"  {{ old('status', $event->status) == 'cancelled'  ? 'selected' : '' }}>Cancelled</option>
+                                    <option value="completed"  {{ old('status', $event->status) == 'completed'  ? 'selected' : '' }}>Completed</option>
                                 </select>
                                 @error('status')<span class="invalid-feedback">{{ $message }}</span>@enderror
                             </div>
@@ -168,4 +196,21 @@
         </div>
     </section>
 </div>
+
+@push('scripts')
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('image-preview');
+        const label   = input.nextElementSibling;
+        if (input.files && input.files[0]) {
+            label.textContent = input.files[0].name;
+            preview.src = URL.createObjectURL(input.files[0]);
+            preview.style.display = 'block';
+        } else {
+            label.textContent = 'Choose new image...';
+            preview.style.display = 'none';
+        }
+    }
+</script>
+@endpush
 @endsection

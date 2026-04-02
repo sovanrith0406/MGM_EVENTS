@@ -4,155 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'MGM Event')</title>
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #f59e0b;
+            --bg-dark: #0a0710;
+            --bg-card: #151221;
+            --primary-neon: #ff007f; /* Neon Pink */
+            --primary-hover: #e60073;
+            --text-main: #ffffff;
+            --text-muted: #a0aec0;
         }
-        body { font-family: 'Segoe UI', sans-serif; }
+
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 { font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .text-neon { color: var(--primary-neon) !important; text-shadow: 0 0 15px rgba(255, 0, 127, 0.4); }
+        .text-muted-custom { color: var(--text-muted); }
+
+        /* Buttons */
+        .btn-neon {
+            background-color: var(--primary-neon);
+            color: #fff;
+            border-radius: 30px;
+            padding: 10px 24px;
+            font-weight: 600;
+            border: none;
+            box-shadow: 0 4px 15px rgba(255, 0, 127, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-neon:hover {
+            background-color: var(--primary-hover);
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(255, 0, 127, 0.5);
+            transform: translateY(-2px);
+        }
+        .btn-outline-neon {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 2px solid var(--primary-neon);
+            border-radius: 30px;
+            padding: 8px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-outline-neon:hover {
+            background-color: var(--primary-neon);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 0, 127, 0.3);
+        }
 
         /* Navbar */
-        .navbar-brand .brand-accent { color: var(--secondary); }
-        .nav-link { font-weight: 500; font-size: 14px; }
-        .nav-link.active, .nav-link:hover { color: var(--primary) !important; }
-        .btn-nav-login {
-            background: var(--primary); color: #fff !important;
-            border-radius: 8px; padding: 6px 18px !important;
+        .navbar {
+            background-color: rgba(10, 7, 16, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05) !important;
         }
-        .btn-nav-login:hover { background: var(--primary-dark); }
-
-        /* Hero */
-        .hero-section {
-            background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
-            padding: 90px 0;
-        }
-        .hero-badge {
-            display: inline-block;
-            background: #dbeafe; color: var(--primary);
-            font-size: 11px; font-weight: 700;
-            padding: 4px 14px; border-radius: 20px;
-            letter-spacing: 1px; text-transform: uppercase;
-        }
-        .hero-section h1 { font-size: clamp(32px, 5vw, 56px); font-weight: 800; line-height: 1.15; }
-        .hero-section h1 span { color: var(--primary); }
-
-        /* Section label */
-        .section-label {
-            display: inline-block;
-            background: #dbeafe; color: var(--primary);
-            font-size: 11px; font-weight: 700;
-            padding: 4px 14px; border-radius: 20px;
-            letter-spacing: 1px; text-transform: uppercase;
-        }
-
-        /* Cards */
-        .event-card { border-radius: 16px; border: 1px solid #e2e8f0; transition: all .25s; }
-        .event-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,.1); transform: translateY(-3px); }
-        .card-img-placeholder {
-            height: 180px;
-            background: linear-gradient(135deg, #dbeafe, #ede9fe);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 48px; color: var(--primary);
-            border-radius: 16px 16px 0 0;
-        }
-        .badge-published { background: #dcfce7; color: #16a34a; }
-        .badge-draft     { background: #fef9c3; color: #ca8a04; }
-        .card-price { font-size: 18px; font-weight: 700; color: var(--primary); }
-
-        /* Stats */
-        .stat-box { border-radius: 16px; border: 1px solid #e2e8f0; padding: 32px 20px; text-align: center; }
-        .stat-num  { font-size: 42px; font-weight: 800; color: var(--primary); }
-        .stat-label { font-size: 14px; color: #64748b; }
-
-        /* Speaker card */
-        .speaker-card { border-radius: 16px; border: 1px solid #e2e8f0; transition: all .25s; }
-        .speaker-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,.1); transform: translateY(-3px); }
-        .speaker-avatar {
-            width: 90px; height: 90px; border-radius: 50%;
-            object-fit: cover; border: 3px solid var(--primary);
-        }
-        .speaker-avatar-placeholder {
-            width: 90px; height: 90px; border-radius: 50%;
-            background: linear-gradient(135deg, #dbeafe, #ede9fe);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 32px; color: var(--primary);
-            border: 3px solid var(--primary);
-            margin: 0 auto;
-        }
-
-        /* Sponsor */
-        .sponsor-card { border-radius: 12px; border: 1px solid #e2e8f0; transition: all .2s; }
-        .sponsor-card:hover { border-color: var(--primary); box-shadow: 0 4px 15px rgba(37,99,235,.08); }
-        .sponsor-logo { width: 100px; height: 60px; object-fit: contain; }
-
-        /* Page header */
-        .page-header {
-            background: linear-gradient(135deg, #eff6ff, #f0fdf4);
-            padding: 52px 24px; text-align: center;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        /* CTA */
-        .cta-section { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+        .navbar-brand { color: #fff !important; font-weight: 800; letter-spacing: 1px; }
+        .navbar-brand span { color: var(--primary-neon); }
+        .nav-link { color: var(--text-main) !important; font-weight: 500; font-size: 15px; text-transform: uppercase; margin: 0 10px; transition: color 0.3s; }
+        .nav-link:hover, .nav-link.active { color: var(--primary-neon) !important; }
+        .navbar-toggler { background-color: rgba(255,255,255,0.1); border: none; }
+        .navbar-toggler-icon { filter: invert(1); }
 
         /* Footer */
-        footer { background: #1e293b; color: #94a3b8; }
-        footer .footer-brand { font-size: 22px; font-weight: 700; color: #fff; }
-        footer .footer-brand span { color: var(--secondary); }
-        footer h5 { color: #fff; font-size: 14px; font-weight: 600; }
-        footer a { color: #94a3b8; text-decoration: none; font-size: 14px; }
-        footer a:hover { color: #fff; }
-        footer .footer-bottom { border-top: 1px solid #334155; font-size: 13px; }
-
-        /* Schedule */
-        .schedule-time {
-            min-width: 90px; background: #eff6ff;
-            border-radius: 10px; font-size: 13px;
-            font-weight: 600; color: var(--primary);
+        footer { 
+            background: #050308; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            color: var(--text-muted); 
         }
-        .tag { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; text-transform: uppercase; }
-        .tag-talk     { background: #dbeafe; color: var(--primary); }
-        .tag-workshop { background: #fef9c3; color: #b45309; }
-        .tag-keynote  { background: #fce7f3; color: #be185d; }
-        .tag-panel    { background: #dcfce7; color: #15803d; }
-        .tag-break    { background: #f1f5f9; color: #64748b; }
-
-        /* Sponsor tiers */
-        .tier-platinum { background: #e0e7ff; color: #3730a3; }
-        .tier-gold     { background: #fef9c3; color: #92400e; }
-        .tier-silver   { background: #f1f5f9; color: #64748b; }
-        .tier-bronze   { background: #fef3c7; color: #92400e; }
-        .tier-partner  { background: #f0fdf4; color: #166534; }
+        footer .footer-brand { font-size: 24px; font-weight: 800; color: #fff; text-transform: uppercase; }
+        footer .footer-brand span { color: var(--primary-neon); }
+        footer h5 { color: #fff; font-size: 16px; font-weight: 800; margin-bottom: 20px; }
+        footer a { color: var(--text-muted); text-decoration: none; font-size: 15px; transition: all 0.3s; }
+        footer a:hover { color: var(--primary-neon); padding-left: 5px; }
+        footer .footer-bottom { border-top: 1px solid rgba(255,255,255,0.05); font-size: 14px; padding-top: 20px; margin-top: 40px; }
     </style>
     @stack('styles')
 </head>
-<body class="bg-white">
+<body>
 
 {{-- Navbar --}}
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm sticky-top">
+<nav class="navbar navbar-expand-lg fixed-top py-3">
     <div class="container">
-        <a class="navbar-brand fw-bold text-primary fs-5 d-flex align-items-center gap-2" href="{{ route('frontend.home') }}">
-            <i class="fas fa-calendar-star"></i> MGM <span class="brand-accent">EVENT</span>
+        <a class="navbar-brand fs-4 d-flex align-items-center gap-2" href="{{ route('frontend.home') }}">
+            <i class="fas text-neon"></i> MGM <span>EVENT</span>
         </a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
-                <li class="nav-item"><a class="nav-link @yield('nav_home')"     href="{{ route('frontend.home') }}">Home</a></li>
-                <li class="nav-item"><a class="nav-link @yield('nav_events')"   href="{{ route('frontend.events') }}">Events</a></li>
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item"><a class="nav-link @yield('nav_home')" href="{{ route('frontend.home') }}">Home</a></li>
+                <li class="nav-item"><a class="nav-link @yield('nav_events')" href="{{ route('frontend.events') }}">Events</a></li>
                 <li class="nav-item"><a class="nav-link @yield('nav_speakers')" href="{{ route('frontend.speakers') }}">Speakers</a></li>
-                <li class="nav-item"><a class="nav-link @yield('nav_schedule')" href="{{ route('frontend.schedule') }}">Schedule</a></li>
                 <li class="nav-item"><a class="nav-link @yield('nav_sponsors')" href="{{ route('frontend.sponsors') }}">Sponsors</a></li>
-                <li class="nav-item"><a class="nav-link @yield('nav_contact')"  href="{{ route('frontend.contact') }}">Contact</a></li>
-                <li class="nav-item ms-lg-2">
-                    <a class="nav-link btn-nav-login" href="{{ route('login') }}">
-                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                <li class="nav-item"><a class="nav-link @yield('nav_contact')" href="{{ route('frontend.contact') }}">Contact</a></li>
+                <li class="nav-item ms-lg-4 mt-3 mt-lg-0">
+                    <a class="btn-neon text-decoration-none d-inline-block" href="{{ route('login') }}">
+                        <i class="fas fa-ticket-alt me-2"></i> Get Tickets
                     </a>
                 </li>
             </ul>
@@ -160,54 +117,62 @@
     </div>
 </nav>
 
-@yield('content')
+<main style="padding-top: 80px;">
+    @yield('content')
+</main>
 
 {{-- Footer --}}
-<footer class="pt-5 pb-3">
+<footer class="pt-5 pb-4 mt-5">
     <div class="container">
-        <div class="row g-4 mb-4">
+        <div class="row g-5 mb-4">
             <div class="col-lg-4">
-                <div class="footer-brand mb-2">
-                    <i class="fas fa-calendar-star"></i> MGM <span>EVENT</span>
+                <div class="footer-brand mb-3">
+                    <i class="fas fa-bullseye text-neon"></i> MGM <span>EVENT</span>
                 </div>
-                <p style="font-size:14px; line-height:1.7;">
-                    Cambodia's premier event management platform. Connecting speakers, sponsors, and attendees across the kingdom.
+                <p class="text-muted-custom pe-lg-4" style="line-height: 1.8;">
+                    Elevating experiences. Cambodia's premier event management platform connecting industry leaders, innovators, and professionals.
                 </p>
+                <div class="d-flex gap-3 mt-4">
+                    <a href="#" class="text-white fs-5"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-white fs-5"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white fs-5"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="text-white fs-5"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-            <div class="col-6 col-lg-2">
-                <h5 class="mb-3">Quick Links</h5>
+            <div class="col-6 col-lg-2 offset-lg-1">
+                <h5>Explore</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="{{ route('frontend.home') }}">Home</a></li>
-                    <li class="mb-2"><a href="{{ route('frontend.events') }}">Events</a></li>
-                    <li class="mb-2"><a href="{{ route('frontend.speakers') }}">Speakers</a></li>
-                    <li class="mb-2"><a href="{{ route('frontend.schedule') }}">Schedule</a></li>
+                    <li class="mb-3"><a href="{{ route('frontend.home') }}">Home</a></li>
+                    <li class="mb-3"><a href="{{ route('frontend.events') }}">All Events</a></li>
+                    <li class="mb-3"><a href="{{ route('frontend.speakers') }}">Speakers</a></li>
+                    <li class="mb-3"><a href="{{ route('frontend.sponsors') }}">Sponsors</a></li>
                 </ul>
             </div>
             <div class="col-6 col-lg-2">
-                <h5 class="mb-3">More</h5>
+                <h5>Support</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="{{ route('frontend.sponsors') }}">Sponsors</a></li>
-                    <li class="mb-2"><a href="{{ route('frontend.contact') }}">Contact</a></li>
-                    <li class="mb-2"><a href="{{ route('login') }}">Login</a></li>
+                    <li class="mb-3"><a href="#">FAQ</a></li>
+                    <li class="mb-3"><a href="#">Privacy Policy</a></li>
+                    <li class="mb-3"><a href="#">Terms of Service</a></li>
+                    <li class="mb-3"><a href="{{ route('frontend.contact') }}">Contact Us</a></li>
                 </ul>
             </div>
-            <div class="col-lg-4">
-                <h5 class="mb-3">Contact</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> Phnom Penh, Cambodia</li>
-                    <li class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i> <a href="mailto:info@mgmevent.com">info@mgmevent.com</a></li>
-                    <li class="mb-2"><i class="fas fa-phone me-2 text-primary"></i> <a href="tel:+85510336620">(+855) 10 33 66 20</a></li>
+            <div class="col-lg-3">
+                <h5>Contact</h5>
+                <ul class="list-unstyled text-muted-custom">
+                    <li class="mb-3"><i class="fas fa-map-marker-alt me-2 text-neon"></i> Phnom Penh, Cambodia</li>
+                    <li class="mb-3"><i class="fas fa-envelope me-2 text-neon"></i> info@mgmevent.com</li>
+                    <li class="mb-3"><i class="fas fa-phone me-2 text-neon"></i> (+855) 10 33 66 20</li>
                 </ul>
             </div>
         </div>
-        <div class="footer-bottom d-flex justify-content-between flex-wrap gap-2 pt-3">
-            <span>© {{ date('Y') }} MGM Event. All rights reserved.</span>
-            <span>Built with ❤️ in Cambodia</span>
+        <div class="footer-bottom d-flex justify-content-between flex-wrap gap-2 text-muted-custom">
+            <span>© {{ date('Y') }} MGM Event Platform. All rights reserved.</span>
+            <span>Made with <i class="fas fa-heart text-neon mx-1"></i> in Cambodia</span>
         </div>
     </div>
 </footer>
 
-<!-- Bootstrap 5 JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @stack('scripts')
 </body>
