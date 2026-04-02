@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Http\Controllers\Backend;
+
+use App\Http\Controllers\Controller;
+use App\Models\Event;
+use App\Models\SupplierBooking;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class SupplierBookingController extends Controller
+{
+    // ── Index ────────────────────────────────────────────────────
+    public function index()
+    {
+        $bookings = SupplierBooking::with('event')
+            ->latest()
+            ->paginate(15);
+
+        return view('backend.supplier_bookings.index', compact('bookings'));
+    }
+
+    // ── Create ───────────────────────────────────────────────────
+    public function create()
+    {
+        $events = Event::orderBy('event_name')->get(['event_id', 'event_name']);
+        return view('backend.supplier_bookings.create', compact('events'));
+    }
+
+    // ── Store ────────────────────────────────────────────────────
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'event_id'      => 'required|exists:events,event_id',
+            'supplier_name' => 'required|string|max:150',
+            'description'   => 'nullable|string|max:255',
+            'booking_date'  => 'required|date',
+            'amount'        => 'required|numeric|min:0',
+            'currency'      => 'required|string|size:3',
+            'status'        => 'required|in:pending,confirmed,cancelled,paid',
+        ]);
+
+        $validated['created_by'] = Auth::id();
+
+        SupplierBooking::create($validated);
+
+        return redirect()->route('supplier_booking.index')
+            ->with('success', 'Booking created successfully.');
+    }
+
+    // ── Edit ─────────────────────────────────────────────────────
+    public function edit(SupplierBooking $supplier_booking)
+    {
+        $events = Event::orderBy('event_name')->get(['event_id', 'event_name']);
+        return view('backend.supplier_bookings.edit', compact('supplier_booking', 'events'));
+    }
+
+    // ── Update ───────────────────────────────────────────────────
+    public function update(Request $request, SupplierBooking $supplier_booking)
+    {
+        $validated = $request->validate([
+            'event_id'      => 'required|exists:events,event_id',
+            'supplier_name' => 'required|string|max:150',
+            'description'   => 'nullable|string|max:255',
+            'booking_date'  => 'required|date',
+            'amount'        => 'required|numeric|min:0',
+            'currency'      => 'required|string|size:3',
+            'status'        => 'required|in:pending,confirmed,cancelled,paid',
+        ]);
+
+        $supplier_booking->update($validated);
+
+        return redirect()->route('supplier_booking.index')
+            ->with('success', 'Booking updated successfully.');
+    }
+
+    // ── Destroy ──────────────────────────────────────────────────
+    public function destroy(SupplierBooking $supplier_booking)
+    {
+        $supplier_booking->delete();
+
+        return redirect()->route('supplier_booking.index')
+            ->with('success', 'Booking deleted successfully.');
+    }
+}

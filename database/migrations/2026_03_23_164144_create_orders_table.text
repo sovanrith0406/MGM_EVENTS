@@ -1,0 +1,48 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('orders', function (Blueprint $table) {
+            // Primary Key: BIGINT NOT NULL AUTO_INCREMENT
+            $table->id('order_id'); 
+            
+            $table->unsignedBigInteger('event_id');
+            $table->string('buyer_name', 150);
+            $table->string('buyer_email', 190);
+            $table->string('buyer_phone', 50)->nullable();
+            
+            $table->enum('status', ['pending', 'paid', 'cancelled', 'refunded'])
+                  ->default('pending');
+                  
+            $table->string('payment_ref', 120)->nullable();
+            $table->decimal('subtotal', 12, 2)->default(0.00);
+            $table->decimal('total', 12, 2)->default(0.00);
+            $table->char('currency', 3)->default('USD');
+            
+            // Your SQL only specified created_at. 
+            // If you also want 'updated_at', replace the line below with: $table->timestamps();
+            $table->dateTime('created_at')->useCurrent();
+
+            // Indexes
+            $table->index(['event_id', 'status'], 'idx_orders_event_status');
+            $table->index('buyer_email', 'idx_orders_email');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('orders');
+    }
+};

@@ -1,0 +1,156 @@
+@extends('backend.layouts.master')
+@section('title', 'Add Supplier Booking | Event')
+
+@section('main-content')
+<div class="content-wrapper">
+
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Add Supplier Booking</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('supplier_booking.index') }}">Supplier Bookings</a>
+                        </li>
+                        <li class="breadcrumb-item active">Add Booking</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Booking Information</h3>
+                </div>
+
+                <form action="{{ route('supplier_booking.store') }}" method="POST">
+                    @csrf
+                    <div class="card-body">
+
+                        {{-- Validation Errors --}}
+                        @if($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        {{-- Event --}}
+                        <div class="form-group">
+                            <label for="event_id">Event <span class="text-danger">*</span></label>
+                            <select name="event_id" id="event_id"
+                                    class="form-control @error('event_id') is-invalid @enderror">
+                                <option value="">-- Select Event --</option>
+                                @foreach($events as $event)
+                                    <option value="{{ $event->event_id }}"
+                                        {{ old('event_id') == $event->event_id ? 'selected' : '' }}>
+                                        {{ $event->event_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('event_id')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        {{-- Supplier Name --}}
+                        <div class="form-group">
+                            <label for="supplier_name">Supplier Name <span class="text-danger">*</span></label>
+                            <input type="text" name="supplier_name" id="supplier_name"
+                                   class="form-control @error('supplier_name') is-invalid @enderror"
+                                   value="{{ old('supplier_name') }}"
+                                   placeholder="e.g. ABC Catering Co.">
+                            @error('supplier_name')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        {{-- Description --}}
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea name="description" id="description" rows="3"
+                                      class="form-control @error('description') is-invalid @enderror"
+                                      placeholder="Optional notes about this booking">{{ old('description') }}</textarea>
+                            @error('description')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        {{-- Booking Date --}}
+                        <div class="form-group">
+                            <label for="booking_date">Booking Date <span class="text-danger">*</span></label>
+                            <input type="date" name="booking_date" id="booking_date"
+                                   class="form-control @error('booking_date') is-invalid @enderror"
+                                   value="{{ old('booking_date') }}">
+                            @error('booking_date')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        {{-- Amount & Currency (side by side) --}}
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label for="amount">Amount <span class="text-danger">*</span></label>
+                                <input type="number" name="amount" id="amount" step="0.01" min="0"
+                                       class="form-control @error('amount') is-invalid @enderror"
+                                       value="{{ old('amount') }}"
+                                       placeholder="0.00">
+                                @error('amount')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="currency">Currency <span class="text-danger">*</span></label>
+                                <select name="currency" id="currency"
+                                        class="form-control @error('currency') is-invalid @enderror">
+                                    <option value="USD" {{ old('currency', 'USD') == 'USD' ? 'selected' : '' }}>USD</option>
+                                    <option value="KHR" {{ old('currency') == 'KHR' ? 'selected' : '' }}>KHR</option>
+                                    <option value="EUR" {{ old('currency') == 'EUR' ? 'selected' : '' }}>EUR</option>
+                                </select>
+                                @error('currency')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Status --}}
+                        <div class="form-group">
+                            <label for="status">Status <span class="text-danger">*</span></label>
+                            <select name="status" id="status"
+                                    class="form-control @error('status') is-invalid @enderror">
+                                <option value="pending"   {{ old('status', 'pending') == 'pending'   ? 'selected' : '' }}>Pending</option>
+                                <option value="confirmed" {{ old('status') == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+                                <option value="paid"      {{ old('status') == 'paid'      ? 'selected' : '' }}>Paid</option>
+                                <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                            </select>
+                            @error('status')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                    </div>{{-- end card-body --}}
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save mr-1"></i> Save Booking
+                        </button>
+                        <a href="{{ route('supplier_booking.index') }}" class="btn btn-secondary ml-2">
+                            <i class="fas fa-times mr-1"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </section>
+</div>
+@endsection

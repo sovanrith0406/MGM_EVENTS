@@ -1,0 +1,7 @@
+*
+!private/
+!public/
+!.gitignore
+$path = $request->file('avatar')->store('avatars', 'public');
+// saves to storage/app/public/avatars/filename.jpg
+// accessed via asset('storage/avatars/filename.jpg')

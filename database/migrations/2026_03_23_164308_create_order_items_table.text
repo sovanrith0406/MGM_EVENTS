@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('order_items', function (Blueprint $table) {
+            // Primary Key: BIGINT NOT NULL AUTO_INCREMENT
+            $table->id('order_item_id');
+            
+            // Columns
+            $table->unsignedBigInteger('order_id');
+            $table->unsignedBigInteger('ticket_type_id');
+            $table->integer('qty');
+            $table->decimal('unit_price', 12, 2);
+            $table->decimal('line_total', 12, 2);
+
+            // Indexes
+            $table->index('ticket_type_id', 'fk_orderitems_ticket');
+            $table->index('order_id', 'idx_orderitems_order');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('order_items');
+    }
+};
