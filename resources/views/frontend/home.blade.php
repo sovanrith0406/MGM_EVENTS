@@ -304,39 +304,6 @@
     </div>
 </section>
 
-{{-- Featured Speakers --}}
-{{-- <section class="py-5 text-center">
-    <div class="container py-5">
-        <div class="section-subtitle">Industry Leaders</div>
-        <h2 class="text-white mb-5">Meet The Visionaries</h2>
-        <div class="row g-5 mt-3 justify-content-center">
-            @foreach($featuredSpeakers as $speaker)
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="speaker-avatar-wrapper">
-                    @if($speaker->photo_url)
-                        <img src="{{ asset('storage/' . $speaker->photo_url) }}"
-                             class="speaker-avatar"
-                             alt="{{ $speaker->full_name }}"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="speaker-avatar" style="display:none; align-items:center; justify-content:center; font-size:40px; color:rgba(255,255,255,0.2);">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    @else
-                        <div class="speaker-avatar d-flex align-items-center justify-content-center"
-                             style="font-size:40px; color:rgba(255,255,255,0.2);">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    @endif
-                </div>
-                <h5 class="text-white mb-1">{{ $speaker->full_name }}</h5>
-                <div class="text-neon small fw-bold mb-1">{{ $speaker->title ?? '—' }}</div>
-                <div class="text-muted-custom small">{{ $speaker->company ?? '' }}</div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-</section> --}}
-
 {{-- CTA Section --}}
 <section class="cta-section py-5 text-center">
     <div class="container py-5 my-3">

@@ -9,6 +9,7 @@ use App\Http\Controllers\backend\mail\Mail_BoxController;
 use App\Http\Controllers\Backend\ProfileController;
 use App\Http\Controllers\backend\ScheduleController;
 use App\Http\Controllers\backend\SpeakersController;
+use App\Http\Controllers\Backend\SponsorReportController;
 use App\Http\Controllers\backend\SponsorsController;
 use App\Http\Controllers\Backend\SupplierBookingController;
 use App\Http\Controllers\Backend\UserController;
@@ -54,9 +55,13 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // ── Booking (auth required) ───────────────────────────────────────────────
+    // ── Booking (any authenticated user: admin / user / supplier) ─────────────
+    // No role middleware — intentional so any logged-in person can book an event.
     Route::get('/book-event/{event}',  [FrontendController::class, 'bookingForm']) ->name('frontend.booking.form');
     Route::post('/book-event/{event}', [FrontendController::class, 'bookingStore'])->name('frontend.booking.store');
+
+    // ── My Bookings — logged-in user views their own booking history ──────────
+    Route::get('/my-bookings', [FrontendController::class, 'myBookings'])->name('frontend.my_bookings');
 
     // ── Dashboard ─────────────────────────────────────────────────────────────
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -94,9 +99,14 @@ Route::middleware('auth')->group(function () {
         Route::delete('/sponsors/{sponsorId}/unlink/{eventId}',
             [SponsorsController::class, 'unlinkEvent'])->name('sponsors.unlinkEvent');
 
+        // Booking report: admin + user can view all bookings across events
         Route::get('reports/booking', [BookingReportController::class, 'index'])
              ->name('reports.booking');
-    });
+             
+        // Inside Route::middleware('role:admin,user')->group(...) — alongside reports.booking:
+        Route::get('reports/sponsor', [SponsorReportController::class, 'index'])
+            ->name('reports.sponsor');
+            });
 
     // ── Admin + User + Supplier ───────────────────────────────────────────────
     Route::middleware('role:admin,user,supplier')->group(function () {

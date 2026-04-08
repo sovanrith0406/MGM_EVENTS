@@ -29,10 +29,6 @@ Route::prefix('')->name('frontend.')->group(function () {
     Route::get('/contact-us',          [FrontendController::class, 'contact'])       ->name('contact');
     Route::post('/contact-us',         [FrontendController::class, 'contactSubmit']) ->name('contact.submit');
 });
-// Remove from frontend group, add inside Route::middleware('auth') group:
-Route::get('/book-event/{event}',  [FrontendController::class, 'bookingForm']) ->name('frontend.booking.form');
-Route::post('/book-event/{event}', [FrontendController::class, 'bookingStore'])->name('frontend.booking.store');
-
 
 // ── Guest only ────────────────────────────────────────────────────────────────
 Route::middleware('guest')->group(function () {
@@ -57,6 +53,10 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 Route::middleware('auth')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // ── Booking (auth required) ───────────────────────────────────────────────
+    Route::get('/book-event/{event}',  [FrontendController::class, 'bookingForm']) ->name('frontend.booking.form');
+    Route::post('/book-event/{event}', [FrontendController::class, 'bookingStore'])->name('frontend.booking.store');
 
     // ── Dashboard ─────────────────────────────────────────────────────────────
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

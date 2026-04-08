@@ -48,7 +48,7 @@
         <li class="nav-item @yield('d_menu-open')">
           <a href="{{ url('/dashboard') }}" class="nav-link @yield('d_active')">
             <i class="nav-icon fas fa-tachometer-alt"></i>
-            <p>Dashboard</p>
+            <p>Dashboard <span class="right badge badge-danger">New</span></p>
           </a>
         </li>
 
@@ -67,7 +67,7 @@
         <li class="nav-item @yield('s_menu-open')">
           <a href="{{ url('/speakers') }}" class="nav-link @yield('s_active')">
             <i class="nav-icon fas fa-microphone"></i>
-            <p>Speakers <span class="right badge badge-danger">New</span></p>
+            <p>Speakers</p>
           </a>
         </li>
         @endif
@@ -92,8 +92,8 @@
         </li>
         @endif
 
-        {{-- Booking — Admin + Supplier --}}
-        @if(auth()->user()->isAdmin() || auth()->user()->isSupplier())
+        {{-- Booking — Admin + User + Supplier (fixed: was missing User) --}}
+        @if(auth()->user()->isAdmin() || auth()->user()->isUser() || auth()->user()->isSupplier())
         <li class="nav-item @yield('b_menu-open')">
           <a href="{{ url('/supplier_booking') }}" class="nav-link @yield('b_active')">
             <i class="nav-icon fas fa-edit"></i>
@@ -123,10 +123,24 @@
         {{-- Reports — Admin + User --}}
         @if(auth()->user()->isAdmin() || auth()->user()->isUser())
         <li class="nav-item @yield('r_menu-open')">
-          <a href="{{ route('reports.booking') }}" class="nav-link @yield('r_active')">
-            <i class="nav-icon fas fa-chart-bar"></i>
-            <p>Reports</p>
-          </a>
+            <a href="#" class="nav-link @yield('r_active')">
+                <i class="nav-icon fas fa-chart-bar"></i>
+                <p>Reports <i class="fas fa-angle-left right"></i></p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{{ route('reports.booking') }}" class="nav-link @yield('r_booking_active')">
+                        <i class="nav-icon fas fa-ticket-alt text-warning"></i>
+                        <p>Booking Report</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('reports.sponsor') }}" class="nav-link @yield('r_sponsor_active')">
+                        <i class="nav-icon fas fa-handshake text-info"></i>
+                        <p>Sponsor Report</p>
+                    </a>
+                </li>
+            </ul>
         </li>
         @endif
 
